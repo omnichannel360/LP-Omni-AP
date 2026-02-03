@@ -7,12 +7,12 @@ export default function ProductLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div className="product-scroll h-screen overflow-y-auto">
       <ProductHeader />
-      <main className="min-h-screen pt-20">
+      <main className="pt-20">
         {children}
       </main>
       <ProductFooter />
-    </>
+    </div>
   );
 }
