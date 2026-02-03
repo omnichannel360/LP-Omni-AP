@@ -1,12 +1,19 @@
 export default function Home() {
   return (
-    <section className="flex flex-col items-center justify-center px-4 py-24 text-center sm:px-6 lg:px-8">
-      <h1 className="text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl dark:text-white">
-        Welcome to LP-Omni-AP
-      </h1>
-      <p className="mt-6 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-        This is the home page. Awaiting your design instructions.
-      </p>
+    <section className="relative h-screen w-full overflow-hidden">
+      {/* Video Background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src="/videos/hero-banner.webm" type="video/webm" />
+      </video>
+
+      {/* Subtle dark overlay */}
+      <div className="absolute inset-0 bg-black/10" />
     </section>
   );
 }

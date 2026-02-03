@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 60" fill="none">
+  <!-- Hexagon Icon -->
+  <g transform="translate(5, 5)">
+    <path d="M25 0L47.5 13v26L25 52 2.5 39V13z" fill="#e8751a"/>
+    <path d="M25 10L38 18v16l-13 8-13-8V18z" fill="#1a1a1a" opacity="0.3"/>
+    <path d="M25 8l15 9v18l-15 9-15-9V17z" stroke="#fff" stroke-width="1.5" fill="none" opacity="0.4"/>
+    <path d="M18 28l7 7 12-14" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <!-- ACOUSTIC text -->
+  <text x="60" y="28" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#ffffff" letter-spacing="2">ACOUSTIC</text>
+  <!-- Panels Australia text -->
+  <text x="60" y="48" font-family="Arial, sans-serif" font-size="14" fill="#e8751a" letter-spacing="1.5">Panels  Australia</text>
+</svg>

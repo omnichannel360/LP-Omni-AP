@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
+import Sidebar from "@/components/navbar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "LP-Omni-AP",
-  description: "LP-Omni-AP Landing Page",
+  title: "Acoustic Panels Australia",
+  description: "Premium acoustic solutions for commercial and residential spaces.",
 };
 
 export default function RootLayout({
@@ -29,9 +28,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        <main className="min-h-screen">{children}</main>
-        <Footer />
+        <Sidebar />
+        {/* Main content offset by sidebar width on desktop */}
+        <main className="main-content h-screen overflow-y-auto pt-16 lg:ml-[260px] lg:pt-0">
+          {children}
+        </main>
       </body>
     </html>
   );
