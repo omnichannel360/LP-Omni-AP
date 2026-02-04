@@ -14,7 +14,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, slug, summary, content, thumbnailUrl, author, isPublished } = body;
+    const { title, slug, summary, content, thumbnailUrl, bannerUrl, author, isPublished } = body;
 
     if (!title || !slug) {
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
         summary: summary || null,
         content: content || null,
         thumbnail_url: thumbnailUrl || null,
+        banner_url: bannerUrl || null,
         author: author || "AP Acoustic Team",
         is_published: isPublished ?? true,
       })

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface CaseStudy {
   id: string;
@@ -13,10 +15,12 @@ interface CaseStudy {
 }
 
 export default function AdminCaseStudies() {
+  const router = useRouter();
   const [studies, setStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [duplicating, setDuplicating] = useState("");
   const [success, setSuccess] = useState("");
 
   const [title, setTitle] = useState("");
@@ -46,11 +50,8 @@ export default function AdminCaseStudies() {
     });
     if (res.ok) {
       const s = await res.json();
-      setStudies((prev) => [s, ...prev]);
-      setTitle(""); setSlug(""); setSummary(""); setContent(""); setAuthor("AP Acoustic Team");
-      setShowAdd(false);
-      setSuccess("Case study created");
-      setTimeout(() => setSuccess(""), 3000);
+      // Redirect to the edit page
+      router.push(`/admin/case-studies/${s.id}`);
     }
     setSaving(false);
   }
@@ -64,6 +65,22 @@ export default function AdminCaseStudies() {
     if (res.ok) {
       setStudies((prev) => prev.map((s) => (s.id === id ? { ...s, is_published: !current } : s)));
     }
+  }
+
+  async function duplicateStudy(id: string) {
+    setDuplicating(id);
+    const res = await fetch("/api/admin/case-studies/duplicate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      const dup = await res.json();
+      setStudies((prev) => [dup, ...prev]);
+      setSuccess("Case study duplicated");
+      setTimeout(() => setSuccess(""), 3000);
+    }
+    setDuplicating("");
   }
 
   async function deleteStudy(id: string) {
@@ -118,7 +135,7 @@ export default function AdminCaseStudies() {
           </div>
           <div className="flex gap-3">
             <button type="submit" disabled={saving} className="rounded-lg bg-[#e8751a] px-5 py-2 text-sm font-semibold text-white hover:bg-[#d06815] disabled:opacity-50">
-              {saving ? "Creating..." : "Create"}
+              {saving ? "Creating..." : "Create & Edit"}
             </button>
             <button type="button" onClick={() => setShowAdd(false)} className="rounded-lg border border-white/10 px-5 py-2 text-sm text-gray-300 hover:bg-white/5">Cancel</button>
           </div>
@@ -150,7 +167,24 @@ export default function AdminCaseStudies() {
                   </button>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => deleteStudy(s.id)} className="text-red-400 hover:text-red-300 text-xs">Delete</button>
+                  <div className="flex items-center justify-end gap-2">
+                    <Link
+                      href={`/admin/case-studies/${s.id}`}
+                      className="rounded px-2.5 py-1 text-xs font-medium text-[#e8751a] hover:bg-[#e8751a]/10 border border-[#e8751a]/20"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => duplicateStudy(s.id)}
+                      disabled={duplicating === s.id}
+                      className="rounded px-2.5 py-1 text-xs font-medium text-blue-400 hover:bg-blue-500/10 border border-blue-500/20 disabled:opacity-50"
+                    >
+                      {duplicating === s.id ? "..." : "Duplicate"}
+                    </button>
+                    <button onClick={() => deleteStudy(s.id)} className="rounded px-2.5 py-1 text-xs font-medium text-red-400 hover:bg-red-500/10 border border-red-500/20">
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

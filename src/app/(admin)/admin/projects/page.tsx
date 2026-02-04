@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Project {
   id: string;
@@ -13,10 +15,12 @@ interface Project {
 }
 
 export default function AdminProjects() {
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [duplicating, setDuplicating] = useState("");
   const [success, setSuccess] = useState("");
 
   const [title, setTitle] = useState("");
@@ -44,11 +48,8 @@ export default function AdminProjects() {
     });
     if (res.ok) {
       const p = await res.json();
-      setProjects((prev) => [...prev, p]);
-      setTitle(""); setSlug(""); setSummary("");
-      setShowAdd(false);
-      setSuccess("Project created");
-      setTimeout(() => setSuccess(""), 3000);
+      // Redirect to edit page for the new project
+      router.push(`/admin/projects/${p.id}`);
     }
     setSaving(false);
   }
@@ -62,6 +63,22 @@ export default function AdminProjects() {
     if (res.ok) {
       setProjects((prev) => prev.map((p) => (p.id === id ? { ...p, is_published: !current } : p)));
     }
+  }
+
+  async function duplicateProject(id: string) {
+    setDuplicating(id);
+    const res = await fetch("/api/admin/projects/duplicate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) {
+      const dup = await res.json();
+      setProjects((prev) => [...prev, dup]);
+      setSuccess("Project duplicated");
+      setTimeout(() => setSuccess(""), 3000);
+    }
+    setDuplicating("");
   }
 
   async function deleteProject(id: string) {
@@ -106,7 +123,7 @@ export default function AdminProjects() {
           </div>
           <div className="flex gap-3">
             <button type="submit" disabled={saving} className="rounded-lg bg-[#e8751a] px-5 py-2 text-sm font-semibold text-white hover:bg-[#d06815] disabled:opacity-50">
-              {saving ? "Creating..." : "Create"}
+              {saving ? "Creating..." : "Create & Edit"}
             </button>
             <button type="button" onClick={() => setShowAdd(false)} className="rounded-lg border border-white/10 px-5 py-2 text-sm text-gray-300 hover:bg-white/5">Cancel</button>
           </div>
@@ -117,6 +134,7 @@ export default function AdminProjects() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/10 bg-white/5">
+              <th className="px-4 py-3 text-left font-medium text-gray-400 w-12">Img</th>
               <th className="px-4 py-3 text-left font-medium text-gray-400">Title</th>
               <th className="px-4 py-3 text-left font-medium text-gray-400">Slug</th>
               <th className="px-4 py-3 text-center font-medium text-gray-400">Status</th>
@@ -126,6 +144,17 @@ export default function AdminProjects() {
           <tbody>
             {projects.map((p) => (
               <tr key={p.id} className="border-b border-white/5 hover:bg-white/5">
+                <td className="px-4 py-3">
+                  {p.thumbnail_url ? (
+                    <img src={p.thumbnail_url} alt="" className="w-10 h-10 rounded object-cover border border-white/10" />
+                  ) : (
+                    <div className="w-10 h-10 rounded bg-white/5 border border-white/10 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
+                </td>
                 <td className="px-4 py-3 text-white font-medium">{p.title}</td>
                 <td className="px-4 py-3 text-gray-500 font-mono text-xs">/gallery/{p.slug}</td>
                 <td className="px-4 py-3 text-center">
@@ -134,7 +163,24 @@ export default function AdminProjects() {
                   </button>
                 </td>
                 <td className="px-4 py-3 text-right">
-                  <button onClick={() => deleteProject(p.id)} className="text-red-400 hover:text-red-300 text-xs">Delete</button>
+                  <div className="flex items-center justify-end gap-2">
+                    <Link
+                      href={`/admin/projects/${p.id}`}
+                      className="rounded px-2.5 py-1 text-xs font-medium text-[#e8751a] hover:bg-[#e8751a]/10 border border-[#e8751a]/20"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => duplicateProject(p.id)}
+                      disabled={duplicating === p.id}
+                      className="rounded px-2.5 py-1 text-xs font-medium text-blue-400 hover:bg-blue-500/10 border border-blue-500/20 disabled:opacity-50"
+                    >
+                      {duplicating === p.id ? "..." : "Duplicate"}
+                    </button>
+                    <button onClick={() => deleteProject(p.id)} className="rounded px-2.5 py-1 text-xs font-medium text-red-400 hover:bg-red-500/10 border border-red-500/20">
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

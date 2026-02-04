@@ -18,6 +18,7 @@ interface Product {
 export default function AdminDashboardPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [duplicating, setDuplicating] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -37,6 +38,25 @@ export default function AdminDashboardPage() {
       console.error("Failed to fetch products:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDuplicate = async (id: string) => {
+    setDuplicating(id);
+    try {
+      const res = await fetch("/api/admin/products/duplicate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        const dup = await res.json();
+        setProducts((prev) => [...prev, dup]);
+      }
+    } catch (err) {
+      console.error("Failed to duplicate product:", err);
+    } finally {
+      setDuplicating("");
     }
   };
 
@@ -168,6 +188,13 @@ export default function AdminDashboardPage() {
                       >
                         Edit
                       </Link>
+                      <button
+                        onClick={() => handleDuplicate(product.id)}
+                        disabled={duplicating === product.id}
+                        className="px-3 py-1.5 text-xs text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 rounded-md transition-colors disabled:opacity-50"
+                      >
+                        {duplicating === product.id ? "..." : "Duplicate"}
+                      </button>
                       <button
                         onClick={() => handleDelete(product.id, product.name)}
                         className="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 rounded-md transition-colors"
