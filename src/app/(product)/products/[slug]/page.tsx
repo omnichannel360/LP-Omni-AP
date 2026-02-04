@@ -410,7 +410,7 @@ export default function ProductDetail() {
           DESIGN PATTERN TABS — dark bg, orange text, thumbnails
           ────────────────────────────────────────────────────────── */}
       <section className="border-b border-white/10 bg-[#1a1a1a] pt-6">
-        <div className="mx-auto flex max-w-[1400px] items-end gap-6 overflow-x-auto px-6 pb-6 pt-4 lg:gap-10 lg:px-10">
+        <div className="mx-auto flex max-w-[1400px] items-end gap-6 overflow-x-auto px-8 sm:px-10 pb-6 pt-4 lg:gap-10 lg:px-16">
           {designs.map((d) => {
             const isActive = d.id === activeDesignId;
             return (
@@ -438,7 +438,7 @@ export default function ProductDetail() {
       {/* ──────────────────────────────────────────────────────────
           BREADCRUMB
           ────────────────────────────────────────────────────────── */}
-      <div className="mx-auto max-w-[1400px] px-6 pt-8 lg:px-10">
+      <div className="mx-auto max-w-[1400px] px-8 sm:px-10 pt-8 lg:px-16">
         <nav className="flex items-center gap-2 text-[13px] text-white/40">
           <Link href="/products" className="transition-colors hover:text-[#e8751a]">Ceiling</Link>
           <span>/</span>
@@ -457,7 +457,7 @@ export default function ProductDetail() {
       {/* ──────────────────────────────────────────────────────────
           HERO — title, description, resource links + image
           ────────────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-[1400px] px-6 py-10 lg:px-10">
+      <section className="mx-auto max-w-[1400px] px-8 sm:px-10 py-10 lg:px-16">
         <div className="grid gap-10 lg:grid-cols-2">
           {/* Left: Info */}
           <div className="flex flex-col justify-center">
@@ -535,7 +535,7 @@ export default function ProductDetail() {
           COLORWAYS
           ────────────────────────────────────────────────────────── */}
       <section className="border-t border-white/10 bg-[#151515]">
-        <div className="mx-auto max-w-[1400px] px-6 py-14 lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
             <h2 className="text-3xl font-bold">Colorways</h2>
             <div className="flex gap-3">
@@ -587,7 +587,7 @@ export default function ProductDetail() {
           BUILD A PRODUCT SAMPLE
           ────────────────────────────────────────────────────────── */}
       <section className="border-t border-white/10">
-        <div className="mx-auto max-w-[1400px] px-6 py-14 lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
           <h2 className="mb-2 text-3xl font-bold">Build a product sample.</h2>
           <p className="mb-10 text-white/60">
             Build your product, download a PDF, and order a custom sample.
@@ -707,7 +707,7 @@ export default function ProductDetail() {
           RESOURCES & SPECS
           ────────────────────────────────────────────────────────── */}
       <section className="border-t border-white/10 bg-[#151515]">
-        <div className="mx-auto max-w-[1400px] px-6 py-14 lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
           <div className="grid gap-14 lg:grid-cols-2">
             <div>
               <h2 className="mb-8 text-3xl font-bold">Resources</h2>
@@ -748,7 +748,7 @@ export default function ProductDetail() {
           SUSTAINABILITY & CUSTOM
           ────────────────────────────────────────────────────────── */}
       <section className="border-t border-white/10">
-        <div className="mx-auto max-w-[1400px] px-6 py-14 lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
           <div className="grid gap-14 lg:grid-cols-2">
             <div>
               <h2 className="mb-4 text-3xl font-bold">Sustainability</h2>
@@ -786,7 +786,7 @@ export default function ProductDetail() {
           HOW TO SPECIFY
           ────────────────────────────────────────────────────────── */}
       <section className="border-t border-white/10 bg-[#151515]">
-        <div className="mx-auto max-w-[1400px] px-6 py-14 lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
           <h2 className="mb-12 text-3xl font-bold">How to specify</h2>
           <div className="grid gap-10 sm:grid-cols-3">
             {[
@@ -822,7 +822,7 @@ export default function ProductDetail() {
           RELATED PRODUCTS
           ────────────────────────────────────────────────────────── */}
       <section className="border-t border-white/10">
-        <div className="mx-auto max-w-[1400px] px-6 py-14 lg:px-10">
+        <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
           <h2 className="mb-10 text-3xl font-bold">Related Products</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
