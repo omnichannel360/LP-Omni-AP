@@ -18,12 +18,14 @@ interface Props {
   productId: string;
   productName: string;
   variants: Variant[];
+  embedded?: boolean;
 }
 
 export default function VariantPricingForm({
   productId,
   productName,
   variants: initialVariants,
+  embedded = false,
 }: Props) {
   const router = useRouter();
   const [variants, setVariants] = useState<Variant[]>(initialVariants);
@@ -132,7 +134,9 @@ export default function VariantPricingForm({
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">{productName}</h1>
+          <h2 className={embedded ? "text-xl font-bold" : "text-2xl font-bold"}>
+            {embedded ? "Variant Pricing" : productName}
+          </h2>
           <p className="text-gray-400 text-sm mt-1">
             {variants.length} variant{variants.length !== 1 ? "s" : ""}
           </p>
@@ -144,12 +148,14 @@ export default function VariantPricingForm({
           >
             + Add Variant
           </button>
-          <button
-            onClick={() => router.push("/admin/pricing")}
-            className="rounded-lg border border-white/10 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/5"
-          >
-            Back
-          </button>
+          {!embedded && (
+            <button
+              onClick={() => router.push("/admin/pricing")}
+              className="rounded-lg border border-white/10 px-5 py-2.5 text-sm text-gray-300 hover:bg-white/5"
+            >
+              Back
+            </button>
+          )}
         </div>
       </div>
 

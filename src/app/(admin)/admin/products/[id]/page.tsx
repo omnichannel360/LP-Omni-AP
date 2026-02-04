@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ProductForm from "@/components/admin/product-form";
+import VariantPricingForm from "@/components/admin/variant-pricing-form";
 
 interface Product {
   id: string;
@@ -10,22 +11,44 @@ interface Product {
   [key: string]: unknown;
 }
 
+interface Variant {
+  id: string;
+  thickness: string;
+  size: string;
+  face_color: string;
+  colorway_code: string | null;
+  sku: string | null;
+  price_cents: number;
+  is_available: boolean;
+}
+
 export default function EditProductPage() {
   const params = useParams();
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
+  const [variants, setVariants] = useState<Variant[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchData = async () => {
       try {
-        const res = await fetch(`/api/products/${params.id}`);
-        if (res.status === 404) {
+        const [productRes, variantsRes] = await Promise.all([
+          fetch(`/api/products/${params.id}`),
+          fetch(`/api/admin/variants?productId=${params.id}`),
+        ]);
+
+        if (productRes.status === 404) {
           router.push("/admin");
           return;
         }
-        const data = await res.json();
-        setProduct(data);
+
+        const productData = await productRes.json();
+        setProduct(productData);
+
+        if (variantsRes.ok) {
+          const variantsData = await variantsRes.json();
+          setVariants(Array.isArray(variantsData) ? variantsData : []);
+        }
       } catch {
         router.push("/admin");
       } finally {
@@ -33,7 +56,7 @@ export default function EditProductPage() {
       }
     };
 
-    fetchProduct();
+    fetchData();
   }, [params.id, router]);
 
   if (loading) {
@@ -50,6 +73,16 @@ export default function EditProductPage() {
     <div>
       <h1 className="text-3xl font-bold mb-8">Edit: {product.name}</h1>
       <ProductForm initialData={product} />
+
+      {/* Variant Pricing Section */}
+      <div className="mt-12 border-t border-white/10 pt-10">
+        <VariantPricingForm
+          productId={product.id}
+          productName={product.name}
+          variants={variants}
+          embedded
+        />
+      </div>
     </div>
   );
 }

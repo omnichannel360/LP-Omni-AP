@@ -17,7 +17,7 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   const body = await request.json();
-  const { globalDiscountPercent, pointsPerDollarSpent } = body;
+  const { globalDiscountPercent, pointsPerDollarSpent, paymentGateways } = body;
 
   // Get existing settings row
   const { data: existing } = await supabaseAdmin
@@ -40,6 +40,8 @@ export async function PUT(request: NextRequest) {
     updates.global_discount_percent = globalDiscountPercent;
   if (pointsPerDollarSpent !== undefined)
     updates.points_per_dollar_spent = pointsPerDollarSpent;
+  if (paymentGateways !== undefined)
+    updates.payment_gateways = paymentGateways;
 
   const { data, error } = await supabaseAdmin
     .from("global_settings")

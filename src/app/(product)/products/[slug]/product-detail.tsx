@@ -360,9 +360,24 @@ export default function ProductDetail({
       .then((data) => {
         const list: Variant[] = Array.isArray(data) ? data : [];
         setVariants(list);
+        // Auto-select first variant's thickness and size
+        if (list.length > 0) {
+          setSelectedThickness(list[0].thickness);
+          setSelectedSize(list[0].size);
+        }
       })
       .catch(() => {});
   }, [product.id, isMember]);
+
+  // Derive unique thicknesses, sizes, face colors from variants
+  const variantThicknesses = [...new Set(variants.map((v) => v.thickness))];
+  const variantSizes = [...new Set(variants.map((v) => v.size))];
+  const variantFaceColors = [...new Set(variants.map((v) => v.face_color))];
+
+  // Use variant-derived values when variants exist, otherwise product.build_*
+  const displayThicknesses = variants.length > 0 ? variantThicknesses : buildThicknesses;
+  const displaySizes = variants.length > 0 ? variantSizes : buildSizes;
+  const displayFaceColors = variants.length > 0 ? variantFaceColors : buildFaceColors;
 
   // Find matching variant when build options change
   const findVariant = useCallback(() => {
@@ -901,7 +916,7 @@ export default function ProductDetail({
                 </select>
               </div>
 
-              {buildThicknesses.length > 0 && (
+              {displayThicknesses.length > 0 && (
                 <div>
                   <label className="mb-2 block text-[13px] font-semibold text-white/80">2. Select thickness</label>
                   <select
@@ -909,14 +924,14 @@ export default function ProductDetail({
                     onChange={(e) => setSelectedThickness(e.target.value)}
                     className="w-full max-w-[240px] rounded border border-white/20 bg-[#1a1a1a] px-4 py-3 text-sm text-white focus:border-[#e8751a] focus:outline-none"
                   >
-                    {buildThicknesses.map((t) => (
+                    {displayThicknesses.map((t) => (
                       <option key={t} value={t}>{t}</option>
                     ))}
                   </select>
                 </div>
               )}
 
-              {buildSizes.length > 0 && (
+              {displaySizes.length > 0 && (
                 <div>
                   <label className="mb-2 block text-[13px] font-semibold text-white/80">3. Select size</label>
                   <select
@@ -924,21 +939,21 @@ export default function ProductDetail({
                     onChange={(e) => setSelectedSize(e.target.value)}
                     className="w-full max-w-[240px] rounded border border-white/20 bg-[#1a1a1a] px-4 py-3 text-sm text-white focus:border-[#e8751a] focus:outline-none"
                   >
-                    {buildSizes.map((s) => (
+                    {displaySizes.map((s) => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
                 </div>
               )}
 
-              {buildFaceColors.length > 0 && (
+              {displayFaceColors.length > 0 && (
                 <div>
                   <label className="mb-2 block text-[13px] font-semibold text-white/80">4. Select face color</label>
                   <select
                     className="mb-4 w-full max-w-[240px] rounded border border-white/20 bg-[#1a1a1a] px-4 py-3 text-sm text-white focus:border-[#e8751a] focus:outline-none"
-                    defaultValue={buildFaceColors[0]}
+                    defaultValue={displayFaceColors[0]}
                   >
-                    {buildFaceColors.map((fc) => (
+                    {displayFaceColors.map((fc) => (
                       <option key={fc} value={fc.toLowerCase()}>{fc}</option>
                     ))}
                   </select>
