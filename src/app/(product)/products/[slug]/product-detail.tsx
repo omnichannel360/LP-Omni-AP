@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { addToCart } from "@/lib/cart";
 
 /* ═══════════════════════════════════════════════════════════════════
    TYPES
@@ -301,12 +302,23 @@ const defaultGradients: Record<string, string> = {
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
 
+interface Variant {
+  id: string;
+  thickness: string;
+  size: string;
+  face_color: string;
+  colorway_code: string | null;
+  price_cents: number;
+}
+
 export default function ProductDetail({
   product,
   designs,
+  isMember = false,
 }: {
   product: Product;
   designs: Design[];
+  isMember?: boolean;
 }) {
   const colorways: Colorway[] = product.colorways || [];
   const specs: Spec[] = product.specs || [];
@@ -327,6 +339,55 @@ export default function ProductDetail({
   );
   const [selectedSize, setSelectedSize] = useState(buildSizes[0] || "");
   const [heroIdx, setHeroIdx] = useState(0);
+  const [variants, setVariants] = useState<Variant[]>([]);
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [addedToCart, setAddedToCart] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+
+  // Fetch variants for members
+  useEffect(() => {
+    if (!isMember) return;
+    fetch(`/api/products/${product.id}/variants`)
+      .then((r) => r.json())
+      .then((data) => {
+        const list: Variant[] = Array.isArray(data) ? data : [];
+        setVariants(list);
+      })
+      .catch(() => {});
+  }, [product.id, isMember]);
+
+  // Find matching variant when build options change
+  const findVariant = useCallback(() => {
+    if (variants.length === 0) return;
+    const match = variants.find(
+      (v) =>
+        v.thickness === selectedThickness &&
+        v.size === selectedSize
+    );
+    setSelectedVariant(match || null);
+  }, [variants, selectedThickness, selectedSize]);
+
+  useEffect(() => {
+    findVariant();
+  }, [findVariant]);
+
+  function handleAddToCart() {
+    if (!selectedVariant) return;
+    addToCart({
+      variantId: selectedVariant.id,
+      productId: product.id,
+      productName: product.name,
+      variantDescription: `${selectedVariant.thickness} / ${selectedVariant.size} / ${selectedVariant.face_color}`,
+      thickness: selectedVariant.thickness,
+      size: selectedVariant.size,
+      faceColor: selectedVariant.face_color,
+      priceCents: selectedVariant.price_cents,
+      quantity,
+    });
+    window.dispatchEvent(new Event("cart-updated"));
+    setAddedToCart(true);
+    setTimeout(() => setAddedToCart(false), 2000);
+  }
 
   const activeDesign = designs.find((d) => d.design_key === activeDesignId) || designs[0];
   const currentColor = colorways.find((c) => c.code === selectedColor);
@@ -636,11 +697,73 @@ export default function ProductDetail({
                 </div>
               )}
 
+              {/* Pricing & Add to Cart */}
+              {isMember ? (
+                <div className="rounded-xl border border-white/10 bg-[#0d0d0d] p-5 space-y-4">
+                  {selectedVariant ? (
+                    <>
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-bold text-[#e8751a]">
+                          ${(selectedVariant.price_cents / 100).toFixed(2)}
+                        </span>
+                        <span className="text-sm text-white/40">AUD per unit</span>
+                      </div>
+                      <p className="text-xs text-white/50">
+                        {selectedVariant.thickness} · {selectedVariant.size} · {selectedVariant.face_color}
+                      </p>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center rounded border border-white/10">
+                          <button
+                            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                            className="px-3 py-2 text-white/60 hover:text-white"
+                          >
+                            −
+                          </button>
+                          <span className="w-10 text-center text-sm text-white">{quantity}</span>
+                          <button
+                            onClick={() => setQuantity((q) => q + 1)}
+                            className="px-3 py-2 text-white/60 hover:text-white"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          onClick={handleAddToCart}
+                          className="flex-1 rounded bg-[#e8751a] px-6 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#d46815]"
+                        >
+                          {addedToCart ? "Added!" : "Add to Cart"}
+                        </button>
+                      </div>
+                    </>
+                  ) : variants.length > 0 ? (
+                    <p className="text-sm text-white/50">
+                      Select a valid combination to see pricing.
+                    </p>
+                  ) : (
+                    <p className="text-sm text-white/50">
+                      No pricing configured for this product yet.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-white/10 bg-[#0d0d0d] p-5">
+                  <p className="text-sm text-white/50 mb-3">
+                    Pricing is available to members only.
+                  </p>
+                  <Link
+                    href="/member/login"
+                    className="inline-block rounded bg-[#e8751a] px-6 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#d46815]"
+                  >
+                    Login for Pricing
+                  </Link>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-3">
                 <button className="rounded bg-[#222] px-6 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#333]">
                   Print
                 </button>
-                <button className="rounded bg-[#e8751a] px-6 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#d46815]">
+                <button className="rounded bg-[#222] px-6 py-2.5 text-[13px] font-semibold text-white transition-colors hover:bg-[#333]">
                   Order Product Sample
                 </button>
               </div>
