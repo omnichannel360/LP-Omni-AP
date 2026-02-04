@@ -2,8 +2,16 @@ import { supabaseAdmin } from "@/lib/supabase-server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
+import CaseStudyLightbox from "@/components/case-study-lightbox";
 
 export const revalidate = 0;
+
+interface ContentImage {
+  id: string;
+  image_url: string;
+  caption: string | null;
+  position: number;
+}
 
 function formatInline(text: string): React.ReactNode {
   const parts = text.split(/(\*\*[^*]+\*\*)/g);
@@ -19,14 +27,40 @@ function formatInline(text: string): React.ReactNode {
   });
 }
 
-function renderContent(content: string) {
+function renderContent(content: string, images: ContentImage[]) {
   const lines = content.split("\n");
   const elements: React.ReactNode[] = [];
   let i = 0;
   let key = 0;
+  let h2Count = 0;
+
+  // Insert images after every 2nd ## heading
+  const imageInsertPoints = [2, 4, 6];
+  let imageIdx = 0;
 
   while (i < lines.length) {
     const line = lines[i];
+
+    // Handle image markdown: ![caption](url)
+    const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imgMatch) {
+      elements.push(
+        <figure key={key++} className="my-8">
+          <img
+            src={imgMatch[2]}
+            alt={imgMatch[1]}
+            className="w-full rounded-lg"
+          />
+          {imgMatch[1] && (
+            <figcaption className="mt-2 text-center text-xs text-white/40 italic">
+              {imgMatch[1]}
+            </figcaption>
+          )}
+        </figure>
+      );
+      i++;
+      continue;
+    }
 
     if (
       line.includes("|") &&
@@ -81,6 +115,49 @@ function renderContent(content: string) {
     }
 
     if (line.startsWith("## ")) {
+      h2Count++;
+
+      // Insert a pair of content images before certain headings
+      if (
+        imageInsertPoints.includes(h2Count) &&
+        imageIdx < images.length
+      ) {
+        const img1 = images[imageIdx];
+        const img2 = imageIdx + 1 < images.length ? images[imageIdx + 1] : null;
+        imageIdx += 2;
+
+        elements.push(
+          <div key={key++} className="my-10 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <figure className="relative aspect-[3/2] overflow-hidden rounded-lg bg-[#1a1a1a]">
+              <img
+                src={img1.image_url}
+                alt={img1.caption || "Case study image"}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              {img1.caption && (
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
+                  <span className="text-xs text-white/70">{img1.caption}</span>
+                </div>
+              )}
+            </figure>
+            {img2 && (
+              <figure className="relative aspect-[3/2] overflow-hidden rounded-lg bg-[#1a1a1a]">
+                <img
+                  src={img2.image_url}
+                  alt={img2.caption || "Case study image"}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {img2.caption && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
+                    <span className="text-xs text-white/70">{img2.caption}</span>
+                  </div>
+                )}
+              </figure>
+            )}
+          </div>
+        );
+      }
+
       elements.push(
         <h2 key={key++} className="mt-10 mb-4 text-2xl font-bold text-white">
           {line.replace("## ", "")}
@@ -166,9 +243,58 @@ export default async function CaseStudyDetail({
 
   if (!study) notFound();
 
+  const { data: images } = await supabaseAdmin
+    .from("case_study_images")
+    .select("*")
+    .eq("case_study_id", study.id)
+    .order("position", { ascending: true });
+
+  const contentImages = (images || []) as ContentImage[];
+  const bannerUrl = study.banner_url || study.thumbnail_url;
+
   return (
-    <div className="py-16">
-      <div className="mx-auto max-w-[900px] px-6 lg:px-10">
+    <div className="min-h-screen bg-[#111]">
+      {/* Banner */}
+      <div className="relative w-full aspect-[21/9] bg-[#0a0a0a] overflow-hidden">
+        {bannerUrl ? (
+          <img
+            src={bannerUrl}
+            alt={study.title}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1a1a1a] to-[#333]" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
+
+        {/* Title overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-10">
+          <div className="mx-auto max-w-[900px]">
+            <div className="flex items-center gap-3 text-xs text-white/60 mb-3">
+              <span>{study.author}</span>
+              <span>&middot;</span>
+              <span>
+                {new Date(study.published_at).toLocaleDateString("en-AU", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">
+              {study.title}
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      {/* Content Image Tiles (clickable with lightbox) */}
+      {contentImages.length > 0 && (
+        <CaseStudyLightbox images={contentImages} />
+      )}
+
+      {/* Back link + content */}
+      <div className="mx-auto max-w-[900px] px-6 lg:px-10 py-10">
         <Link
           href="/case-studies"
           className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#e8751a] transition-colors mb-8"
@@ -179,33 +305,9 @@ export default async function CaseStudyDetail({
           Back to Case Studies
         </Link>
 
-        <div className="relative aspect-[21/9] rounded-xl overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#333] mb-8">
-          {study.thumbnail_url && (
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${study.thumbnail_url})` }}
-            />
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-        </div>
-
-        <div className="flex items-center gap-3 text-xs text-gray-500 mb-4">
-          <span>{study.author}</span>
-          <span>&middot;</span>
-          <span>
-            {new Date(study.published_at).toLocaleDateString("en-AU", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            })}
-          </span>
-        </div>
-
-        <h1 className="text-3xl font-bold text-white sm:text-4xl mb-8">
-          {study.title}
-        </h1>
-
-        <article>{study.content ? renderContent(study.content) : null}</article>
+        <article>
+          {study.content ? renderContent(study.content, contentImages) : null}
+        </article>
 
         <div className="mt-16 rounded-xl border border-[#e8751a]/20 bg-[#e8751a]/5 p-8 text-center">
           <h3 className="text-xl font-bold text-white">
