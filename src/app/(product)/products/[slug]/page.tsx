@@ -143,136 +143,127 @@ const downloadResources = [
    ISOMETRIC 3D PATTERN ICONS — matching Acoufelt style
    ═══════════════════════════════════════════════════════════════════ */
 
-function IsometricIcon({ design, active }: { design: string; active: boolean }) {
-  const s = active ? "#1a1a1a" : "#888";
-  const w = active ? "1.2" : "0.8";
+function DesignThumbnail({ design, active }: { design: string; active: boolean }) {
+  // Isometric 3D icon inside a rounded placeholder thumbnail
+  const s = active ? "#e8751a" : "#e8751a80";
+  const bg = active ? "#2a2520" : "#222";
+  const w = active ? "1.4" : "1";
 
-  // All icons at 100x80 with isometric 3D ceiling-frame perspective
-  switch (design) {
-    case "buffalo":
-      return (
-        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
-          {/* Base plane (isometric) */}
-          <path d="M50 10 L90 30 L50 50 L10 30 Z" stroke={s} strokeWidth={w} fill="none" />
-          {/* Vertical risers */}
-          <line x1="50" y1="10" x2="50" y2="2" stroke={s} strokeWidth={w} />
-          <line x1="90" y1="30" x2="90" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="10" y1="30" x2="10" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="50" y1="50" x2="50" y2="42" stroke={s} strokeWidth={w} />
-          {/* Top plane */}
-          <path d="M50 2 L90 22 L50 42 L10 22 Z" stroke={s} strokeWidth={w} fill="none" />
-          {/* Grid lines horizontal */}
-          <line x1="30" y1="12" x2="70" y2="32" stroke={s} strokeWidth={w} />
-          <line x1="70" y1="12" x2="30" y2="32" stroke={s} strokeWidth={w} />
-          {/* Inner grid */}
-          <path d="M50 2 L50 42" stroke={s} strokeWidth="0.6" />
-          <path d="M10 22 L90 22" stroke={s} strokeWidth="0.6" />
-          {/* Cross members */}
-          <line x1="30" y1="6" x2="30" y2="26" stroke={s} strokeWidth="0.6" />
-          <line x1="70" y1="6" x2="70" y2="26" stroke={s} strokeWidth="0.6" />
-          <line x1="30" y1="18" x2="70" y2="18" stroke={s} strokeWidth="0.6" />
-          <line x1="30" y1="26" x2="70" y2="26" stroke={s} strokeWidth="0.6" />
-          {/* Bottom risers */}
-          <line x1="30" y1="26" x2="30" y2="36" stroke={s} strokeWidth="0.6" />
-          <line x1="70" y1="26" x2="70" y2="36" stroke={s} strokeWidth="0.6" />
-        </svg>
-      );
+  const renderPattern = () => {
+    switch (design) {
+      case "buffalo":
+        return (
+          <>
+            <path d="M50 14 L82 30 L50 46 L18 30 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="50" y1="14" x2="50" y2="6" stroke={s} strokeWidth={w} />
+            <line x1="82" y1="30" x2="82" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="18" y1="30" x2="18" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="50" y1="46" x2="50" y2="38" stroke={s} strokeWidth={w} />
+            <path d="M50 6 L82 22 L50 38 L18 22 Z" stroke={s} strokeWidth={w} fill="none" />
+            <path d="M50 6 L50 38" stroke={s} strokeWidth="0.6" />
+            <path d="M18 22 L82 22" stroke={s} strokeWidth="0.6" />
+            <line x1="34" y1="14" x2="34" y2="30" stroke={s} strokeWidth="0.5" />
+            <line x1="66" y1="14" x2="66" y2="30" stroke={s} strokeWidth="0.5" />
+          </>
+        );
+      case "gingham":
+        return (
+          <>
+            <path d="M50 14 L82 30 L50 46 L18 30 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="50" y1="14" x2="50" y2="6" stroke={s} strokeWidth={w} />
+            <line x1="82" y1="30" x2="82" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="18" y1="30" x2="18" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="50" y1="46" x2="50" y2="38" stroke={s} strokeWidth={w} />
+            <path d="M50 6 L82 22 L50 38 L18 22 Z" stroke={s} strokeWidth={w} fill="none" />
+            <path d="M34 10 L50 18 L34 26 L18 18 Z" stroke={s} strokeWidth="0.5" fill={s} fillOpacity="0.15" />
+            <path d="M66 18 L82 26 L66 34 L50 26 Z" stroke={s} strokeWidth="0.5" fill={s} fillOpacity="0.15" />
+            <path d="M50 6 L50 38" stroke={s} strokeWidth="0.5" />
+            <path d="M18 22 L82 22" stroke={s} strokeWidth="0.5" />
+          </>
+        );
+      case "pincheck":
+        return (
+          <>
+            <path d="M50 14 L82 30 L50 46 L18 30 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="50" y1="14" x2="50" y2="6" stroke={s} strokeWidth={w} />
+            <line x1="82" y1="30" x2="82" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="18" y1="30" x2="18" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="50" y1="46" x2="50" y2="38" stroke={s} strokeWidth={w} />
+            <path d="M50 6 L82 22 L50 38 L18 22 Z" stroke={s} strokeWidth={w} fill="none" />
+            {[26, 34, 42, 50, 58, 66, 74].map((x) => (
+              <line key={x} x1={x} y1="8" x2={x} y2="36" stroke={s} strokeWidth="0.3" />
+            ))}
+            {[10, 14, 18, 22, 26, 30, 34].map((y) => (
+              <line key={y} x1="20" y1={y} x2="80" y2={y} stroke={s} strokeWidth="0.3" />
+            ))}
+          </>
+        );
+      case "tartan":
+        return (
+          <>
+            <path d="M50 14 L82 30 L50 46 L18 30 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="50" y1="14" x2="50" y2="6" stroke={s} strokeWidth={w} />
+            <line x1="82" y1="30" x2="82" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="18" y1="30" x2="18" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="50" y1="46" x2="50" y2="38" stroke={s} strokeWidth={w} />
+            <path d="M50 6 L82 22 L50 38 L18 22 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="34" y1="10" x2="34" y2="30" stroke={s} strokeWidth="1.8" />
+            <line x1="66" y1="10" x2="66" y2="30" stroke={s} strokeWidth="1.8" />
+            <line x1="20" y1="22" x2="80" y2="22" stroke={s} strokeWidth="1.8" />
+            <line x1="50" y1="6" x2="50" y2="38" stroke={s} strokeWidth="0.4" />
+            <line x1="20" y1="15" x2="80" y2="15" stroke={s} strokeWidth="0.4" />
+            <line x1="20" y1="29" x2="80" y2="29" stroke={s} strokeWidth="0.4" />
+          </>
+        );
+      case "tattersall":
+        return (
+          <>
+            <path d="M50 14 L82 30 L50 46 L18 30 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="50" y1="14" x2="50" y2="6" stroke={s} strokeWidth={w} />
+            <line x1="82" y1="30" x2="82" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="18" y1="30" x2="18" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="50" y1="46" x2="50" y2="38" stroke={s} strokeWidth={w} />
+            <path d="M50 6 L82 22 L50 38 L18 22 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="34" y1="10" x2="34" y2="34" stroke={s} strokeWidth="0.6" />
+            <line x1="50" y1="6" x2="50" y2="38" stroke={s} strokeWidth="0.6" />
+            <line x1="66" y1="10" x2="66" y2="34" stroke={s} strokeWidth="0.6" />
+            <line x1="22" y1="15" x2="78" y2="15" stroke={s} strokeWidth="0.6" />
+            <line x1="18" y1="22" x2="82" y2="22" stroke={s} strokeWidth="0.6" />
+            <line x1="22" y1="29" x2="78" y2="29" stroke={s} strokeWidth="0.6" />
+          </>
+        );
+      case "windowpane":
+        return (
+          <>
+            <path d="M50 14 L82 30 L50 46 L18 30 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="50" y1="14" x2="50" y2="6" stroke={s} strokeWidth={w} />
+            <line x1="82" y1="30" x2="82" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="18" y1="30" x2="18" y2="22" stroke={s} strokeWidth={w} />
+            <line x1="50" y1="46" x2="50" y2="38" stroke={s} strokeWidth={w} />
+            <path d="M50 6 L82 22 L50 38 L18 22 Z" stroke={s} strokeWidth={w} fill="none" />
+            <line x1="50" y1="6" x2="50" y2="38" stroke={s} strokeWidth="1" />
+            <line x1="18" y1="22" x2="82" y2="22" stroke={s} strokeWidth="1" />
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
-    case "gingham":
-      return (
-        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
-          <path d="M50 10 L90 30 L50 50 L10 30 Z" stroke={s} strokeWidth={w} fill="none" />
-          <line x1="50" y1="10" x2="50" y2="2" stroke={s} strokeWidth={w} />
-          <line x1="90" y1="30" x2="90" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="10" y1="30" x2="10" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="50" y1="50" x2="50" y2="42" stroke={s} strokeWidth={w} />
-          <path d="M50 2 L90 22 L50 42 L10 22 Z" stroke={s} strokeWidth={w} fill="none" />
-          {/* Gingham: alternating filled/empty cells */}
-          <path d="M30 6 L50 16 L30 26 L10 16 Z" stroke={s} strokeWidth="0.5" fill={active ? "#1a1a1a" : "#aaa"} fillOpacity="0.1" />
-          <path d="M70 6 L90 16 L70 26 L50 16 Z" stroke={s} strokeWidth="0.5" fill={active ? "#1a1a1a" : "#aaa"} fillOpacity="0.1" />
-          <path d="M30 18 L50 28 L30 38 L10 28 Z" stroke={s} strokeWidth="0.5" fill={active ? "#1a1a1a" : "#aaa"} fillOpacity="0.1" />
-          <path d="M70 18 L90 28 L70 38 L50 28 Z" stroke={s} strokeWidth="0.5" fill={active ? "#1a1a1a" : "#aaa"} fillOpacity="0.1" />
-          {/* Grid */}
-          <path d="M50 2 L50 42" stroke={s} strokeWidth="0.6" />
-          <path d="M10 22 L90 22" stroke={s} strokeWidth="0.6" />
-        </svg>
-      );
-
-    case "pincheck":
-      return (
-        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
-          <path d="M50 10 L90 30 L50 50 L10 30 Z" stroke={s} strokeWidth={w} fill="none" />
-          <line x1="50" y1="10" x2="50" y2="2" stroke={s} strokeWidth={w} />
-          <line x1="90" y1="30" x2="90" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="10" y1="30" x2="10" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="50" y1="50" x2="50" y2="42" stroke={s} strokeWidth={w} />
-          <path d="M50 2 L90 22 L50 42 L10 22 Z" stroke={s} strokeWidth={w} fill="none" />
-          {/* Pincheck: dense small grid pattern */}
-          {[0, 1, 2, 3, 4].map((i) => (
-            <line key={`h${i}`} x1={18 + i * 16} y1={7 + i * 3} x2={18 + i * 16} y2={27 + i * 3} stroke={s} strokeWidth="0.4" />
-          ))}
-          {[0, 1, 2, 3].map((i) => (
-            <line key={`v${i}`} x1="14" y1={10 + i * 8} x2="86" y2={18 + i * 8} stroke={s} strokeWidth="0.4" />
-          ))}
-        </svg>
-      );
-
-    case "tartan":
-      return (
-        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
-          <path d="M50 10 L90 30 L50 50 L10 30 Z" stroke={s} strokeWidth={w} fill="none" />
-          <line x1="50" y1="10" x2="50" y2="2" stroke={s} strokeWidth={w} />
-          <line x1="90" y1="30" x2="90" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="10" y1="30" x2="10" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="50" y1="50" x2="50" y2="42" stroke={s} strokeWidth={w} />
-          <path d="M50 2 L90 22 L50 42 L10 22 Z" stroke={s} strokeWidth={w} fill="none" />
-          {/* Tartan: thick + thin crossing lines */}
-          <line x1="30" y1="6" x2="30" y2="26" stroke={s} strokeWidth="1.5" />
-          <line x1="70" y1="6" x2="70" y2="26" stroke={s} strokeWidth="1.5" />
-          <line x1="50" y1="2" x2="50" y2="42" stroke={s} strokeWidth="0.4" />
-          <line x1="10" y1="22" x2="90" y2="22" stroke={s} strokeWidth="1.5" />
-          <line x1="14" y1="14" x2="86" y2="14" stroke={s} strokeWidth="0.4" />
-          <line x1="14" y1="30" x2="86" y2="30" stroke={s} strokeWidth="0.4" />
-        </svg>
-      );
-
-    case "tattersall":
-      return (
-        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
-          <path d="M50 10 L90 30 L50 50 L10 30 Z" stroke={s} strokeWidth={w} fill="none" />
-          <line x1="50" y1="10" x2="50" y2="2" stroke={s} strokeWidth={w} />
-          <line x1="90" y1="30" x2="90" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="10" y1="30" x2="10" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="50" y1="50" x2="50" y2="42" stroke={s} strokeWidth={w} />
-          <path d="M50 2 L90 22 L50 42 L10 22 Z" stroke={s} strokeWidth={w} fill="none" />
-          {/* Tattersall: evenly spaced thin lines */}
-          <line x1="30" y1="6" x2="30" y2="36" stroke={s} strokeWidth="0.6" />
-          <line x1="50" y1="2" x2="50" y2="42" stroke={s} strokeWidth="0.6" />
-          <line x1="70" y1="6" x2="70" y2="36" stroke={s} strokeWidth="0.6" />
-          <line x1="14" y1="14" x2="86" y2="14" stroke={s} strokeWidth="0.6" />
-          <line x1="10" y1="22" x2="90" y2="22" stroke={s} strokeWidth="0.6" />
-          <line x1="14" y1="30" x2="86" y2="30" stroke={s} strokeWidth="0.6" />
-        </svg>
-      );
-
-    case "windowpane":
-      return (
-        <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
-          <path d="M50 10 L90 30 L50 50 L10 30 Z" stroke={s} strokeWidth={w} fill="none" />
-          <line x1="50" y1="10" x2="50" y2="2" stroke={s} strokeWidth={w} />
-          <line x1="90" y1="30" x2="90" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="10" y1="30" x2="10" y2="22" stroke={s} strokeWidth={w} />
-          <line x1="50" y1="50" x2="50" y2="42" stroke={s} strokeWidth={w} />
-          <path d="M50 2 L90 22 L50 42 L10 22 Z" stroke={s} strokeWidth={w} fill="none" />
-          {/* Windowpane: single wide-set cross */}
-          <line x1="50" y1="2" x2="50" y2="42" stroke={s} strokeWidth="1" />
-          <line x1="10" y1="22" x2="90" y2="22" stroke={s} strokeWidth="1" />
-        </svg>
-      );
-
-    default:
-      return null;
-  }
+  return (
+    <div
+      className={`flex h-[72px] w-[100px] items-center justify-center rounded-md border transition-colors ${
+        active
+          ? "border-[#e8751a]/60 bg-[#2a2520]"
+          : "border-white/10 bg-[#222] hover:border-white/20"
+      }`}
+      style={{ backgroundColor: bg }}
+    >
+      <svg width="100" height="52" viewBox="0 0 100 52" fill="none">
+        {renderPattern()}
+      </svg>
+    </div>
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -416,26 +407,24 @@ export default function ProductDetail() {
     <div className="bg-[#1a1a1a] text-white">
 
       {/* ──────────────────────────────────────────────────────────
-          DESIGN PATTERN TABS — light bg, isometric icons
+          DESIGN PATTERN TABS — dark bg, orange text, thumbnails
           ────────────────────────────────────────────────────────── */}
-      <section className="border-b border-[#ddd] bg-[#f0efed]">
-        <div className="mx-auto flex max-w-[1400px] items-end gap-4 overflow-x-auto px-6 py-6 lg:gap-8 lg:px-10">
+      <section className="border-b border-white/10 bg-[#1a1a1a] pt-6">
+        <div className="mx-auto flex max-w-[1400px] items-end gap-6 overflow-x-auto px-6 pb-6 pt-4 lg:gap-10 lg:px-10">
           {designs.map((d) => {
             const isActive = d.id === activeDesignId;
             return (
               <button
                 key={d.id}
                 onClick={() => switchDesign(d.id)}
-                className={`group flex shrink-0 flex-col items-center gap-3 transition-opacity ${
-                  isActive ? "opacity-100" : "opacity-50 hover:opacity-80"
-                }`}
+                className="group flex shrink-0 flex-col items-center gap-3"
               >
-                <IsometricIcon design={d.id} active={isActive} />
+                <DesignThumbnail design={d.id} active={isActive} />
                 <span
-                  className={`text-[11px] uppercase tracking-[0.15em] ${
+                  className={`text-[11px] uppercase tracking-[0.15em] transition-colors ${
                     isActive
-                      ? "font-bold text-[#1a1a1a]"
-                      : "font-medium text-[#666]"
+                      ? "font-bold text-[#e8751a]"
+                      : "font-medium text-[#e8751a]/50 group-hover:text-[#e8751a]/80"
                   }`}
                 >
                   {d.label}
