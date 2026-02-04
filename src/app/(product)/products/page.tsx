@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-server";
+import { isMember } from "@/lib/member-auth";
 
 interface Product {
   id: string;
@@ -11,7 +12,7 @@ interface Product {
   description: string;
 }
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 0;
 
 export default async function Products() {
   const { data: products } = await supabaseAdmin
@@ -21,6 +22,28 @@ export default async function Products() {
     .order("sort_order", { ascending: true });
 
   const items: Product[] = products || [];
+
+  const memberLoggedIn = await isMember();
+
+  // Fetch lowest price per product for members
+  const priceMap: Record<string, number> = {};
+  if (memberLoggedIn && items.length > 0) {
+    const productIds = items.map((p) => p.id);
+    const { data: variants } = await supabaseAdmin
+      .from("product_variants")
+      .select("product_id, price_cents")
+      .in("product_id", productIds)
+      .eq("is_available", true);
+
+    if (variants) {
+      for (const v of variants) {
+        const current = priceMap[v.product_id];
+        if (current === undefined || v.price_cents < current) {
+          priceMap[v.product_id] = v.price_cents;
+        }
+      }
+    }
+  }
 
   return (
     <div className="w-full bg-[#1a1a1a] text-white">
@@ -121,6 +144,15 @@ export default async function Products() {
                 <p className="mt-2 text-sm text-white/50">
                   {product.description}
                 </p>
+                {memberLoggedIn && priceMap[product.id] ? (
+                  <p className="mt-2 text-sm font-semibold text-[#e8751a]">
+                    From ${(priceMap[product.id] / 100).toFixed(2)} AUD
+                  </p>
+                ) : !memberLoggedIn ? (
+                  <p className="mt-2 text-xs text-white/30">
+                    Login for pricing
+                  </p>
+                ) : null}
               </div>
             </Link>
           ))}

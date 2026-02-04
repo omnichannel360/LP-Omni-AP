@@ -548,6 +548,12 @@ export default function ProductDetail({
     doc.save(`${product.name.replace(/\s+/g, "-")}-Colorways.pdf`);
   }
 
+  // Compute starting price from variants
+  const startingPrice =
+    variants.length > 0
+      ? Math.min(...variants.map((v) => v.price_cents))
+      : null;
+
   const activeDesign = designs.find((d) => d.design_key === activeDesignId) || designs[0];
   const currentColor = colorways.find((c) => c.code === selectedColor);
   const heroImages = activeDesign?.hero_images || [];
@@ -643,7 +649,24 @@ export default function ProductDetail({
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
               {activeDesign?.title}
             </h1>
-            <p className="mt-6 leading-relaxed text-white/70">
+            {isMember && startingPrice ? (
+              <p className="mt-3 text-lg">
+                <span className="font-bold text-[#e8751a]">
+                  From ${(startingPrice / 100).toFixed(2)}
+                </span>
+                <span className="ml-1.5 text-sm text-white/40">AUD per unit</span>
+              </p>
+            ) : !isMember ? (
+              <p className="mt-3">
+                <Link
+                  href="/member/login"
+                  className="text-sm text-[#e8751a] hover:underline"
+                >
+                  Login for pricing
+                </Link>
+              </p>
+            ) : null}
+            <p className="mt-4 leading-relaxed text-white/70">
               {activeDesign?.description}
             </p>
 
