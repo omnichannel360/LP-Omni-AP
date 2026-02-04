@@ -3,7 +3,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import CartIcon from "./member/cart-icon";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -52,7 +51,18 @@ export default function ProductHeader() {
           ))}
           {isMember ? (
             <>
-              <CartIcon />
+              <Link
+                href="/member/cart"
+                className="text-[14px] font-medium tracking-wide text-white/80 transition-colors hover:text-[#e8751a]"
+              >
+                Order Cart
+              </Link>
+              <Link
+                href="/member/samples"
+                className="text-[14px] font-medium tracking-wide text-white/80 transition-colors hover:text-[#e8751a]"
+              >
+                Sample Cart
+              </Link>
               <Link
                 href="/member/dashboard"
                 className="text-[14px] font-medium tracking-wide text-[#e8751a] transition-colors hover:text-[#d46815]"
