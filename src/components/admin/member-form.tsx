@@ -30,6 +30,9 @@ export default function MemberForm({ member }: MemberFormProps) {
   const [discountPercent, setDiscountPercent] = useState(
     member?.discount_percent?.toString() || "0"
   );
+  const [pointsBalance, setPointsBalance] = useState(
+    member?.points_balance?.toString() || "0"
+  );
   const [isActive, setIsActive] = useState(member?.is_active ?? true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -51,6 +54,7 @@ export default function MemberForm({ member }: MemberFormProps) {
             company,
             phone,
             discountPercent: parseFloat(discountPercent) || 0,
+            pointsBalance: parseInt(pointsBalance) || 0,
             isActive,
           }
         : {
@@ -208,13 +212,21 @@ export default function MemberForm({ member }: MemberFormProps) {
         </div>
       )}
 
-      {isEditing && member && (
-        <div className="rounded-lg border border-white/10 bg-[#0a0a0a] p-4">
-          <p className="text-sm text-gray-400">
-            Points Balance:{" "}
-            <span className="text-[#e8751a] font-semibold">
-              {member.points_balance} pts
-            </span>
+      {isEditing && (
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            Points Balance
+          </label>
+          <input
+            type="number"
+            value={pointsBalance}
+            onChange={(e) => setPointsBalance(e.target.value)}
+            min="0"
+            step="1"
+            className="w-full max-w-[200px] rounded-lg border border-white/10 bg-[#111] px-4 py-2.5 text-white focus:border-[#e8751a] focus:outline-none"
+          />
+          <p className="mt-1 text-xs text-gray-500">
+            Manually adjust the member&apos;s loyalty points.
           </p>
         </div>
       )}

@@ -26,7 +26,7 @@ export async function PUT(
 ) {
   const { id } = await params;
   const body = await request.json();
-  const { firstName, lastName, company, phone, discountPercent, isActive } = body;
+  const { firstName, lastName, company, phone, discountPercent, pointsBalance, isActive } = body;
 
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (firstName !== undefined) updates.first_name = firstName;
@@ -34,6 +34,7 @@ export async function PUT(
   if (company !== undefined) updates.company = company;
   if (phone !== undefined) updates.phone = phone;
   if (discountPercent !== undefined) updates.discount_percent = discountPercent;
+  if (pointsBalance !== undefined) updates.points_balance = pointsBalance;
   if (isActive !== undefined) updates.is_active = isActive;
 
   const { data, error } = await supabaseAdmin
