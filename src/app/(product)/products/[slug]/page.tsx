@@ -404,7 +404,7 @@ export default function ProductDetail() {
   };
 
   return (
-    <div className="bg-[#1a1a1a] text-white">
+    <div className="w-full bg-[#1a1a1a] text-white">
 
       {/* ──────────────────────────────────────────────────────────
           DESIGN PATTERN TABS — dark bg, orange text, thumbnails

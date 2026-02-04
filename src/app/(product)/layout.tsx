@@ -7,9 +7,9 @@ export default function ProductLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="product-scroll h-screen overflow-y-auto">
+    <div className="product-scroll h-screen w-full overflow-x-hidden overflow-y-auto">
       <ProductHeader />
-      <main className="pt-20">
+      <main className="w-full pt-20">
         {children}
       </main>
       <ProductFooter />

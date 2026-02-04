@@ -53,7 +53,7 @@ const products = [
 
 export default function Products() {
   return (
-    <div className="bg-[#1a1a1a] text-white">
+    <div className="w-full bg-[#1a1a1a] text-white">
       {/* Hero */}
       <section className="bg-gradient-to-b from-[#111] to-[#1a1a1a] py-20 text-center">
         <div className="mx-auto max-w-[800px] px-6">
