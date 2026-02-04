@@ -49,6 +49,12 @@ export default async function MemberLayout({
               Rewards
             </Link>
             <Link
+              href="/member/samples"
+              className="text-sm text-gray-300 hover:text-white transition-colors"
+            >
+              Samples
+            </Link>
+            <Link
               href="/member/cart"
               className="relative text-sm text-gray-300 hover:text-white transition-colors"
             >

@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { addToCart } from "@/lib/cart";
+import { addSampleToCart } from "@/lib/sample-cart";
+import { jsPDF } from "jspdf";
 
 /* ═══════════════════════════════════════════════════════════════════
    TYPES
@@ -344,6 +346,12 @@ export default function ProductDetail({
   const [addedToCart, setAddedToCart] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
+  // Sample selection mode
+  const [sampleMode, setSampleMode] = useState(false);
+  const [selectedSamples, setSelectedSamples] = useState<Set<string>>(new Set());
+  const [sampleAdded, setSampleAdded] = useState(false);
+  const colorwaysSectionRef = useRef<HTMLDivElement>(null);
+
   // Fetch variants for members
   useEffect(() => {
     if (!isMember) return;
@@ -387,6 +395,157 @@ export default function ProductDetail({
     window.dispatchEvent(new Event("cart-updated"));
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
+  }
+
+  // Exit sample mode when clicking outside colorways section
+  useEffect(() => {
+    if (!sampleMode) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        colorwaysSectionRef.current &&
+        !colorwaysSectionRef.current.contains(e.target as Node)
+      ) {
+        setSampleMode(false);
+        setSelectedSamples(new Set());
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [sampleMode]);
+
+  function toggleSampleColor(code: string) {
+    setSelectedSamples((prev) => {
+      const next = new Set(prev);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
+      return next;
+    });
+  }
+
+  function handleAddSamplesToCart() {
+    if (selectedSamples.size === 0) return;
+    const selected = colorways.filter((c) => selectedSamples.has(c.code));
+    addSampleToCart({
+      productId: product.id,
+      productName: product.name,
+      colorways: selected.map((c) => ({
+        code: c.code,
+        name: c.name,
+        hex: c.hex,
+      })),
+    });
+    window.dispatchEvent(new Event("sample-cart-updated"));
+    setSampleAdded(true);
+    setTimeout(() => {
+      setSampleAdded(false);
+      setSampleMode(false);
+      setSelectedSamples(new Set());
+    }, 1500);
+  }
+
+  function handlePrintColorways() {
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+    const pageW = 297;
+    const pageH = 210;
+    const margin = 15;
+    const usableW = pageW - margin * 2;
+
+    // Header background
+    doc.setFillColor(26, 26, 26);
+    doc.rect(0, 0, pageW, 38, "F");
+
+    // Brand name
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(22);
+    doc.setTextColor(232, 117, 26);
+    doc.text("AP Acoustic", margin, 18);
+
+    // Tagline
+    doc.setFontSize(9);
+    doc.setTextColor(200, 200, 200);
+    doc.text("Acoustic Panels Australia", margin, 26);
+
+    // Product name
+    doc.setFontSize(12);
+    doc.setTextColor(255, 255, 255);
+    doc.text(`${product.name} — Colorways`, margin, 34);
+
+    // Orange accent line
+    doc.setDrawColor(232, 117, 26);
+    doc.setLineWidth(0.8);
+    doc.line(margin, 39, pageW - margin, 39);
+
+    // Colorway grid
+    const cols = 8;
+    const swatchW = (usableW - (cols - 1) * 4) / cols;
+    const swatchH = swatchW * 1.3;
+    const startY = 46;
+    let x = margin;
+    let y = startY;
+
+    colorways.forEach((c, i) => {
+      if (i > 0 && i % cols === 0) {
+        x = margin;
+        y += swatchH + 14;
+      }
+      // Check if we need a new page
+      if (y + swatchH + 14 > pageH - 20) {
+        doc.addPage();
+        doc.setFillColor(26, 26, 26);
+        doc.rect(0, 0, pageW, 12, "F");
+        doc.setFontSize(8);
+        doc.setTextColor(200, 200, 200);
+        doc.text(`${product.name} — Colorways (continued)`, margin, 8);
+        y = 18;
+        x = margin;
+      }
+
+      // Draw swatch
+      const hex = c.hex.replace("#", "");
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      doc.setFillColor(r, g, b);
+      doc.roundedRect(x, y, swatchW, swatchH, 1, 1, "F");
+
+      // Border
+      doc.setDrawColor(80, 80, 80);
+      doc.setLineWidth(0.2);
+      doc.roundedRect(x, y, swatchW, swatchH, 1, 1, "S");
+
+      // Color name
+      doc.setFontSize(7);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(40, 40, 40);
+      doc.text(c.name, x + swatchW / 2, y + swatchH + 4, { align: "center" });
+
+      // Color code
+      doc.setFontSize(6);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(120, 120, 120);
+      doc.text(c.code, x + swatchW / 2, y + swatchH + 8, { align: "center" });
+
+      x += swatchW + 4;
+    });
+
+    // Footer
+    const lastPage = doc.getNumberOfPages();
+    for (let p = 1; p <= lastPage; p++) {
+      doc.setPage(p);
+      doc.setFontSize(7);
+      doc.setTextColor(150, 150, 150);
+      doc.text(
+        `AP Acoustic — ${product.name} Colorways | www.apacoustic.com.au`,
+        pageW / 2,
+        pageH - 8,
+        { align: "center" }
+      );
+      doc.text(`Page ${p} of ${lastPage}`, pageW - margin, pageH - 8, {
+        align: "right",
+      });
+    }
+
+    doc.save(`${product.name.replace(/\s+/g, "-")}-Colorways.pdf`);
   }
 
   const activeDesign = designs.find((d) => d.design_key === activeDesignId) || designs[0];
@@ -566,46 +725,132 @@ export default function ProductDetail({
 
       {/* ── COLORWAYS ── */}
       {colorways.length > 0 && (
-        <section className="border-t border-white/10 bg-[#151515]">
+        <section className="border-t border-white/10 bg-[#151515]" ref={colorwaysSectionRef}>
           <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
             <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-              <h2 className="text-3xl font-bold">Colorways</h2>
+              <h2 className="text-3xl font-bold">
+                Colorways
+                {sampleMode && (
+                  <span className="ml-3 text-sm font-normal text-[#e8751a]">
+                    — Select colors for samples
+                  </span>
+                )}
+              </h2>
               <div className="flex gap-3">
-                <button className="flex items-center gap-2 rounded border border-white/20 px-4 py-2 text-[13px] text-white/70 transition-colors hover:border-[#e8751a] hover:text-[#e8751a]">
+                <button
+                  onClick={handlePrintColorways}
+                  className="flex items-center gap-2 rounded border border-white/20 px-4 py-2 text-[13px] text-white/70 transition-colors hover:border-[#e8751a] hover:text-[#e8751a]"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5z" />
+                  </svg>
                   Print
                 </button>
-                <button className="flex items-center gap-2 rounded bg-[#e8751a] px-5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#d46815]">
-                  Order Color Samples
-                </button>
+                {sampleMode ? (
+                  <button
+                    onClick={handleAddSamplesToCart}
+                    disabled={selectedSamples.size === 0}
+                    className={`flex items-center gap-2 rounded px-5 py-2 text-[13px] font-semibold transition-colors ${
+                      selectedSamples.size > 0
+                        ? "bg-[#e8751a] text-white hover:bg-[#d46815]"
+                        : "bg-[#e8751a]/30 text-white/40 cursor-not-allowed"
+                    }`}
+                  >
+                    {sampleAdded
+                      ? "Added!"
+                      : selectedSamples.size > 0
+                      ? `Add ${selectedSamples.size} Sample${selectedSamples.size > 1 ? "s" : ""} to Cart`
+                      : "Select Colors"}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setSampleMode(true)}
+                    className="flex items-center gap-2 rounded bg-[#e8751a] px-5 py-2 text-[13px] font-semibold text-white transition-colors hover:bg-[#d46815]"
+                  >
+                    Order Color Samples
+                  </button>
+                )}
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8">
-              {colorways.map((c) => (
-                <button
-                  key={c.code}
-                  onClick={() => setSelectedColor(c.code)}
-                  className={`group text-left transition-all ${
-                    selectedColor === c.code ? "scale-105" : "hover:scale-[1.02]"
-                  }`}
-                >
-                  <div
-                    className={`aspect-[3/4] w-full rounded-sm border-2 transition-colors ${
-                      selectedColor === c.code
-                        ? "border-[#e8751a]"
-                        : "border-transparent group-hover:border-white/30"
+            <div className={`grid gap-4 transition-all ${
+              sampleMode
+                ? "grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10"
+                : "grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
+            }`}>
+              {colorways.map((c) => {
+                const isSelected = selectedSamples.has(c.code);
+                return sampleMode ? (
+                  <button
+                    key={c.code}
+                    onClick={() => toggleSampleColor(c.code)}
+                    className={`group text-left transition-all ${
+                      isSelected ? "scale-[1.03]" : "hover:scale-[1.01]"
                     }`}
-                    style={{ backgroundColor: c.hex }}
-                  />
-                  <p className={`mt-2 text-[12px] font-semibold leading-tight ${
-                    selectedColor === c.code ? "text-[#e8751a]" : "text-white/80"
-                  }`}>
-                    {c.name}
-                  </p>
-                  <p className="text-[11px] text-white/40">{c.code}</p>
-                </button>
-              ))}
+                  >
+                    <div className="relative">
+                      <div
+                        className={`aspect-[3/4] w-full rounded-sm border-2 transition-all ${
+                          isSelected
+                            ? "border-[#e8751a] shadow-lg shadow-[#e8751a]/20"
+                            : "border-transparent group-hover:border-white/30"
+                        }`}
+                        style={{ backgroundColor: c.hex }}
+                      />
+                      {/* Checkbox overlay */}
+                      <div
+                        className={`absolute top-1.5 right-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-all ${
+                          isSelected
+                            ? "border-[#e8751a] bg-[#e8751a]"
+                            : "border-white/50 bg-black/40"
+                        }`}
+                      >
+                        {isSelected && (
+                          <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                    <p className={`mt-1.5 text-[11px] font-semibold leading-tight ${
+                      isSelected ? "text-[#e8751a]" : "text-white/80"
+                    }`}>
+                      {c.name}
+                    </p>
+                    <p className="text-[10px] text-white/40">{c.code}</p>
+                  </button>
+                ) : (
+                  <button
+                    key={c.code}
+                    onClick={() => setSelectedColor(c.code)}
+                    className={`group text-left transition-all ${
+                      selectedColor === c.code ? "scale-105" : "hover:scale-[1.02]"
+                    }`}
+                  >
+                    <div
+                      className={`aspect-[3/4] w-full rounded-sm border-2 transition-colors ${
+                        selectedColor === c.code
+                          ? "border-[#e8751a]"
+                          : "border-transparent group-hover:border-white/30"
+                      }`}
+                      style={{ backgroundColor: c.hex }}
+                    />
+                    <p className={`mt-2 text-[12px] font-semibold leading-tight ${
+                      selectedColor === c.code ? "text-[#e8751a]" : "text-white/80"
+                    }`}>
+                      {c.name}
+                    </p>
+                    <p className="text-[11px] text-white/40">{c.code}</p>
+                  </button>
+                );
+              })}
             </div>
+
+            {sampleMode && (
+              <p className="mt-4 text-[12px] text-white/40">
+                Click colors to select them, then click &quot;Add to Cart&quot;. Click anywhere outside this section to cancel.
+              </p>
+            )}
           </div>
         </section>
       )}
