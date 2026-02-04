@@ -18,9 +18,22 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[#111] text-white">
+      {/* Mobile top bar — visible only below lg */}
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#0a0a0a]">
+        <Link href="/admin" className="text-lg font-bold text-[#e8751a]">
+          LP Admin
+        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/admin/products/new" className="text-xs text-gray-400 hover:text-white transition-colors">+ Product</Link>
+          <Link href="/admin/orders" className="text-xs text-gray-400 hover:text-white transition-colors">Orders</Link>
+          <Link href="/admin/members" className="text-xs text-gray-400 hover:text-white transition-colors">Members</Link>
+          <Link href="/admin/settings" className="text-xs text-gray-400 hover:text-white transition-colors">Settings</Link>
+        </div>
+      </div>
+
       <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <aside className="w-64 bg-[#0a0a0a] border-r border-white/10 flex flex-col shrink-0">
+        {/* Sidebar — hidden on mobile, shown at lg breakpoint */}
+        <aside className="hidden lg:flex lg:flex-col w-64 bg-[#0a0a0a] border-r border-white/10 shrink-0">
           <div className="p-6 border-b border-white/10">
             <Link href="/admin" className="text-xl font-bold text-[#e8751a]">
               LP Admin
@@ -160,7 +173,7 @@ export default async function AdminLayout({
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto h-screen">
-          <div className="max-w-6xl mx-auto p-8">{children}</div>
+          <div className="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">{children}</div>
         </main>
       </div>
     </div>

@@ -88,7 +88,7 @@ export default function CheckoutPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Checkout</h1>
 
       {error && (
         <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
@@ -104,7 +104,7 @@ export default function CheckoutPage() {
               <h2 className="text-lg font-bold text-white mb-4">
                 Shipping Details
               </h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">
                     First Name *
@@ -159,7 +159,7 @@ export default function CheckoutPage() {
                   className={inputClass}
                 />
               </div>
-              <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
                 <div>
                   <label className="block text-sm text-gray-400 mb-1">
                     City *

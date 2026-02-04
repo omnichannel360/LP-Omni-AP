@@ -127,7 +127,7 @@ function renderContent(content: string, images: ContentImage[]) {
         imageIdx += 2;
 
         elements.push(
-          <div key={key++} className="my-10 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div key={key++} className="my-6 sm:my-10 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <figure className="relative aspect-[3/2] overflow-hidden rounded-lg bg-[#1a1a1a]">
               <img
                 src={img1.image_url}
@@ -159,7 +159,7 @@ function renderContent(content: string, images: ContentImage[]) {
       }
 
       elements.push(
-        <h2 key={key++} className="mt-10 mb-4 text-2xl font-bold text-white">
+        <h2 key={key++} className="mt-8 sm:mt-10 mb-3 sm:mb-4 text-xl sm:text-2xl font-bold text-white">
           {line.replace("## ", "")}
         </h2>
       );
@@ -255,7 +255,7 @@ export default async function CaseStudyDetail({
   return (
     <div className="min-h-screen bg-[#111]">
       {/* Banner */}
-      <div className="relative w-full aspect-[21/9] bg-[#0a0a0a] overflow-hidden">
+      <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] bg-[#0a0a0a] overflow-hidden">
         {bannerUrl ? (
           <img
             src={bannerUrl}
@@ -268,7 +268,7 @@ export default async function CaseStudyDetail({
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20" />
 
         {/* Title overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-10">
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-10">
           <div className="mx-auto max-w-[900px]">
             <div className="flex items-center gap-3 text-xs text-white/60 mb-3">
               <span>{study.author}</span>
@@ -281,7 +281,7 @@ export default async function CaseStudyDetail({
                 })}
               </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">
+            <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-lg">
               {study.title}
             </h1>
           </div>
@@ -294,7 +294,7 @@ export default async function CaseStudyDetail({
       )}
 
       {/* Back link + content */}
-      <div className="mx-auto max-w-[900px] px-6 lg:px-10 py-10">
+      <div className="mx-auto max-w-[900px] px-4 sm:px-6 lg:px-10 py-8 sm:py-10">
         <Link
           href="/case-studies"
           className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-[#e8751a] transition-colors mb-8"

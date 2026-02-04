@@ -47,13 +47,13 @@ export default function AdminOrders() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold">Orders</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">Orders</h1>
         <p className="text-gray-400 text-sm mt-1">
           {orders.length} order{orders.length !== 1 ? "s" : ""}
         </p>
       </div>
 
-      <div className="rounded-xl border border-white/10 overflow-hidden">
+      <div className="rounded-xl border border-white/10 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/10 bg-white/5">

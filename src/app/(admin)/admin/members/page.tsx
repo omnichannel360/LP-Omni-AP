@@ -13,9 +13,9 @@ export default async function AdminMembers() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold">Members</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Members</h1>
           <p className="text-gray-400 text-sm mt-1">
             {items.length} member{items.length !== 1 ? "s" : ""} registered
           </p>
@@ -28,7 +28,7 @@ export default async function AdminMembers() {
         </Link>
       </div>
 
-      <div className="rounded-xl border border-white/10 overflow-hidden">
+      <div className="rounded-xl border border-white/10 overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/10 bg-white/5">

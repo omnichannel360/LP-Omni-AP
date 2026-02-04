@@ -33,7 +33,7 @@ export default function ProductHeader() {
             alt="Acoustic Panels Australia"
             width={180}
             height={50}
-            className="h-10 w-auto"
+            className="h-8 sm:h-10 w-auto"
             priority
           />
         </Link>
@@ -125,6 +125,33 @@ export default function ProductHeader() {
                 </li>
               ))}
             </ul>
+            {isMember ? (
+              <ul className="mt-2 space-y-1 border-t border-white/10 pt-2">
+                <li>
+                  <Link href="/member/cart" onClick={() => setMobileOpen(false)} className="block py-3 text-[15px] font-medium text-white/90 transition-colors hover:text-[#e8751a]">
+                    Order Cart
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/member/samples" onClick={() => setMobileOpen(false)} className="block py-3 text-[15px] font-medium text-white/90 transition-colors hover:text-[#e8751a]">
+                    Sample Cart
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/member/dashboard" onClick={() => setMobileOpen(false)} className="block py-3 text-[15px] font-medium text-[#e8751a] transition-colors hover:text-[#d46815]">
+                    My Account
+                  </Link>
+                </li>
+              </ul>
+            ) : (
+              <ul className="mt-2 space-y-1 border-t border-white/10 pt-2">
+                <li>
+                  <Link href="/member/login" onClick={() => setMobileOpen(false)} className="block py-3 text-[15px] font-medium text-white/90 transition-colors hover:text-[#e8751a]">
+                    Member Login
+                  </Link>
+                </li>
+              </ul>
+            )}
             <div className="mt-4 border-t border-white/10 pt-4">
               <Link
                 href="/contact"

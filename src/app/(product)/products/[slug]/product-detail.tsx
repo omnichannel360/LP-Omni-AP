@@ -586,7 +586,7 @@ export default function ProductDetail({
   if (designs.length === 0) {
     return (
       <div className="w-full bg-[#1a1a1a] text-white">
-        <section className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
+        <section className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 py-14 lg:px-16">
           <h1 className="text-4xl font-bold">{product.name}</h1>
           <p className="mt-4 text-white/70">{product.description}</p>
         </section>
@@ -599,7 +599,7 @@ export default function ProductDetail({
 
       {/* ── DESIGN PATTERN TABS ── */}
       <section className="border-b border-white/10 bg-[#1a1a1a] pt-6">
-        <div className="mx-auto flex max-w-[1400px] items-end gap-6 overflow-x-auto px-8 sm:px-10 pb-6 pt-4 lg:gap-10 lg:px-16">
+        <div className="mx-auto flex max-w-[1400px] items-end gap-6 overflow-x-auto px-4 sm:px-8 md:px-10 pb-6 pt-4 lg:gap-10 lg:px-16">
           {designs.map((d) => {
             const isActive = d.design_key === activeDesignId;
             return (
@@ -625,8 +625,8 @@ export default function ProductDetail({
       </section>
 
       {/* ── BREADCRUMB ── */}
-      <div className="mx-auto max-w-[1400px] px-8 sm:px-10 pt-8 lg:px-16">
-        <nav className="flex items-center gap-2 text-[13px] text-white/40">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 pt-8 lg:px-16">
+        <nav className="flex flex-wrap items-center gap-1 sm:gap-2 text-[11px] sm:text-[13px] text-white/40">
           <Link href="/products" className="transition-colors hover:text-[#e8751a]">
             {product.breadcrumb_category || product.category}
           </Link>
@@ -658,7 +658,7 @@ export default function ProductDetail({
       </div>
 
       {/* ── HERO — title, description, resource links + image ── */}
-      <section className="mx-auto max-w-[1400px] px-8 sm:px-10 py-10 lg:px-16">
+      <section className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 py-10 lg:px-16">
         <div className="grid gap-10 lg:grid-cols-2">
           <div className="flex flex-col justify-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
@@ -686,7 +686,7 @@ export default function ProductDetail({
             </p>
 
             <div className="mt-10">
-              <div className="grid grid-cols-2 gap-x-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8">
                 <button className="flex items-center gap-3 border-b border-white/10 py-4 text-left transition-colors hover:text-[#e8751a]">
                   <ResourceIcon type="resources" />
                   <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-white/70">Resources</span>
@@ -764,7 +764,7 @@ export default function ProductDetail({
       {/* ── COLORWAYS ── */}
       {colorways.length > 0 && (
         <section className="border-t border-white/10 bg-[#151515]" ref={colorwaysSectionRef}>
-          <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 py-14 lg:px-16">
             <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
               <h2 className="text-3xl font-bold">
                 Colorways
@@ -813,8 +813,8 @@ export default function ProductDetail({
 
             <div className={`grid gap-4 transition-all ${
               sampleMode
-                ? "grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10"
-                : "grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8"
+                ? "grid-cols-3 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-10"
+                : "grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8"
             }`}>
               {colorways.map((c) => {
                 const isSelected = selectedSamples.has(c.code);
@@ -895,7 +895,7 @@ export default function ProductDetail({
 
       {/* ── BUILD A PRODUCT SAMPLE ── */}
       <section className="border-t border-white/10">
-        <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 py-14 lg:px-16">
           <h2 className="mb-2 text-3xl font-bold">Build a product sample.</h2>
           <p className="mb-10 text-white/60">
             Build your product, download a PDF, and order a custom sample.
@@ -1087,7 +1087,7 @@ export default function ProductDetail({
       {/* ── RESOURCES & SPECS ── */}
       {(resources.length > 0 || specs.length > 0) && (
         <section className="border-t border-white/10 bg-[#151515]">
-          <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 py-14 lg:px-16">
             <div className="grid gap-14 lg:grid-cols-2">
               {resources.length > 0 && (
                 <div>
@@ -1112,7 +1112,7 @@ export default function ProductDetail({
                     <tbody className="divide-y divide-white/10">
                       {specs.map((s) => (
                         <tr key={s.label}>
-                          <td className="whitespace-nowrap py-3.5 pr-6 text-[14px] font-semibold text-white/60">
+                          <td className="py-3.5 pr-4 sm:pr-6 text-[13px] sm:text-[14px] font-semibold text-white/60">
                             {s.label}
                           </td>
                           <td className="whitespace-pre-line py-3.5 text-[14px] text-white/80">
@@ -1132,7 +1132,7 @@ export default function ProductDetail({
       {/* ── SUSTAINABILITY & CUSTOM ── */}
       {(product.sustainability_content || product.custom_content) && (
         <section className="border-t border-white/10">
-          <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 py-14 lg:px-16">
             <div className="grid gap-14 lg:grid-cols-2">
               {product.sustainability_content && (
                 <div>
@@ -1168,9 +1168,9 @@ export default function ProductDetail({
       {/* ── HOW TO SPECIFY ── */}
       {howToSteps.length > 0 && (
         <section className="border-t border-white/10 bg-[#151515]">
-          <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 py-14 lg:px-16">
             <h2 className="mb-12 text-3xl font-bold">How to specify</h2>
-            <div className="grid gap-10 sm:grid-cols-3">
+            <div className="grid gap-10 grid-cols-1 sm:grid-cols-3">
               {howToSteps.map((item) => (
                 <div key={item.step} className="text-center">
                   <div className="mb-6 flex justify-center">
@@ -1187,7 +1187,7 @@ export default function ProductDetail({
 
       {/* ── RELATED PRODUCTS ── */}
       <section className="border-t border-white/10">
-        <div className="mx-auto max-w-[1400px] px-8 sm:px-10 py-14 lg:px-16">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-8 md:px-10 py-14 lg:px-16">
           <h2 className="mb-10 text-3xl font-bold">Related Products</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[

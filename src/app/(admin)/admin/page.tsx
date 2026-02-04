@@ -89,9 +89,9 @@ export default function AdminDashboardPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Products</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Products</h1>
           <p className="text-gray-500 mt-1">{products.length} products total</p>
         </div>
         <div className="flex gap-3">
@@ -121,7 +121,7 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
       ) : (
-        <div className="bg-[#1a1a1a] rounded-xl border border-white/10 overflow-hidden">
+        <div className="bg-[#1a1a1a] rounded-xl border border-white/10 overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/10">

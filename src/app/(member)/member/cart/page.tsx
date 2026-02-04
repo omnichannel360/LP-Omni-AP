@@ -37,7 +37,7 @@ export default function CartPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Shopping Cart</h1>
 
       {items.length === 0 ? (
         <div className="rounded-xl border border-white/10 bg-[#0a0a0a] p-12 text-center">
@@ -69,7 +69,7 @@ export default function CartPage() {
             {items.map((item) => (
               <div
                 key={item.variantId}
-                className="flex items-center gap-4 rounded-xl border border-white/10 bg-[#0a0a0a] p-4"
+                className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-xl border border-white/10 bg-[#0a0a0a] p-4"
               >
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-white truncate">
@@ -103,7 +103,7 @@ export default function CartPage() {
                     +
                   </button>
                 </div>
-                <div className="text-right w-24">
+                <div className="text-right sm:w-24">
                   <p className="font-semibold text-white">
                     ${((item.priceCents * item.quantity) / 100).toFixed(2)}
                   </p>
