@@ -2,6 +2,10 @@ import Link from "next/link";
 import { supabaseAdmin } from "@/lib/supabase-server";
 import { isMember } from "@/lib/member-auth";
 
+interface Design {
+  hero_images: { url: string; caption: string }[];
+}
+
 interface Product {
   id: string;
   name: string;
@@ -10,6 +14,7 @@ interface Product {
   slug: string;
   gradient: string;
   description: string;
+  designs: Design[];
 }
 
 export const revalidate = 0;
@@ -17,7 +22,7 @@ export const revalidate = 0;
 export default async function Products() {
   const { data: products } = await supabaseAdmin
     .from("products")
-    .select("id, name, category, surface, slug, gradient, description")
+    .select("id, name, category, surface, slug, gradient, description, designs(hero_images)")
     .eq("status", "active")
     .order("sort_order", { ascending: true });
 
@@ -90,50 +95,31 @@ export default async function Products() {
               href={`/products/${product.slug}`}
               className="group"
             >
-              <div
-                className={`aspect-[4/3] overflow-hidden rounded-lg bg-gradient-to-br ${product.gradient} transition-transform group-hover:scale-[1.02]`}
-              >
-                <div className="flex h-full items-center justify-center">
-                  <svg
-                    className="h-20 w-20 text-white/15"
-                    viewBox="0 0 48 48"
-                    fill="none"
+              {(() => {
+                const firstImage = product.designs?.[0]?.hero_images?.[0]?.url;
+                return firstImage ? (
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-[#1a1a1a] transition-transform group-hover:scale-[1.02]">
+                    <img
+                      src={firstImage}
+                      alt={product.name}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className={`aspect-[4/3] overflow-hidden rounded-lg bg-gradient-to-br ${product.gradient} transition-transform group-hover:scale-[1.02]`}
                   >
-                    <rect
-                      x="4"
-                      y="4"
-                      width="18"
-                      height="18"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                    <rect
-                      x="26"
-                      y="4"
-                      width="18"
-                      height="18"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                    <rect
-                      x="4"
-                      y="26"
-                      width="18"
-                      height="18"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                    <rect
-                      x="26"
-                      y="26"
-                      width="18"
-                      height="18"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                  </svg>
-                </div>
-              </div>
+                    <div className="flex h-full items-center justify-center">
+                      <svg className="h-20 w-20 text-white/15" viewBox="0 0 48 48" fill="none">
+                        <rect x="4" y="4" width="18" height="18" stroke="currentColor" strokeWidth="1.5" />
+                        <rect x="26" y="4" width="18" height="18" stroke="currentColor" strokeWidth="1.5" />
+                        <rect x="4" y="26" width="18" height="18" stroke="currentColor" strokeWidth="1.5" />
+                        <rect x="26" y="26" width="18" height="18" stroke="currentColor" strokeWidth="1.5" />
+                      </svg>
+                    </div>
+                  </div>
+                );
+              })()}
               <div className="mt-4">
                 <p className="text-[12px] uppercase tracking-wider text-[#e8751a]">
                   {product.category} — {product.surface}
