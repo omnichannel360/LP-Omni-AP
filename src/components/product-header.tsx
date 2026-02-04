@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import CartIcon from "./member/cart-icon";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -10,11 +11,18 @@ const navLinks = [
   { href: "/about", label: "About Us" },
   { href: "/gallery", label: "Projects" },
   { href: "/case-studies", label: "Case Studies" },
-  { href: "/account", label: "My Account" },
 ];
 
 export default function ProductHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isMember, setIsMember] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/member/auth/session")
+      .then((r) => r.json())
+      .then((data) => setIsMember(!!data.authenticated))
+      .catch(() => {});
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#111111]/95 backdrop-blur-md border-b border-white/10">
@@ -42,6 +50,24 @@ export default function ProductHeader() {
               {link.label}
             </Link>
           ))}
+          {isMember ? (
+            <>
+              <CartIcon />
+              <Link
+                href="/member/dashboard"
+                className="text-[14px] font-medium tracking-wide text-[#e8751a] transition-colors hover:text-[#d46815]"
+              >
+                My Account
+              </Link>
+            </>
+          ) : (
+            <Link
+              href="/member/login"
+              className="text-[14px] font-medium tracking-wide text-white/80 transition-colors hover:text-[#e8751a]"
+            >
+              Member Login
+            </Link>
+          )}
           <Link
             href="/contact"
             className="ml-4 rounded-sm bg-[#e8751a] px-6 py-2.5 text-[13px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#d46815]"

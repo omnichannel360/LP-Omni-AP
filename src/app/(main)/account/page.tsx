@@ -1,12 +1,12 @@
-export default function Account() {
-  return (
-    <section className="flex min-h-screen flex-col items-center justify-center px-4 py-24 text-center sm:px-6 lg:px-8">
-      <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
-        My Account
-      </h1>
-      <p className="mt-6 max-w-2xl text-lg text-white/60">
-        Account page placeholder. Awaiting your design instructions.
-      </p>
-    </section>
-  );
+import { redirect } from "next/navigation";
+import { getMemberSession } from "@/lib/member-auth";
+
+export default async function Account() {
+  const session = await getMemberSession();
+
+  if (session) {
+    redirect("/member/dashboard");
+  }
+
+  redirect("/member/login");
 }
