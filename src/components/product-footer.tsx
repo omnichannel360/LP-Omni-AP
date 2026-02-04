@@ -26,7 +26,7 @@ export default function ProductFooter() {
           {/* Newsletter */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Image
-              src="/images/logo.svg"
+              src="/images/logo.webp"
               alt="Acoustic Panels Australia"
               width={160}
               height={44}

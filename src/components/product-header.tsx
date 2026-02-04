@@ -22,7 +22,7 @@ export default function ProductHeader() {
         {/* Logo */}
         <Link href="/" className="shrink-0">
           <Image
-            src="/images/logo.svg"
+            src="/images/logo.webp"
             alt="Acoustic Panels Australia"
             width={180}
             height={50}

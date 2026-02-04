@@ -22,7 +22,7 @@ export default function Sidebar() {
       <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between bg-[#1a1a1a] px-4 lg:hidden">
         <Link href="/">
           <Image
-            src="/images/logo.svg"
+            src="/images/logo.webp"
             alt="Acoustic Panels Australia"
             width={150}
             height={40}
@@ -64,7 +64,7 @@ export default function Sidebar() {
         <div className="px-6 pt-6 pb-4">
           <Link href="/" onClick={() => setMobileOpen(false)}>
             <Image
-              src="/images/logo.svg"
+              src="/images/logo.webp"
               alt="Acoustic Panels Australia"
               width={180}
               height={50}
